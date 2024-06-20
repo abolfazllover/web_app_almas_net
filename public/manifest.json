@@ -1,0 +1,21 @@
+{
+    "name": "almas net",
+    "short_name": "AlmassNet",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#fff",
+    "theme_color" : "#3B94DC",
+    "description": "almas-net web application",
+    "icons": [
+        {
+            "src": "img/icon-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "img/icon-384x384.png",
+            "sizes": "384x384",
+            "type": "image/png"
+        }
+    ]
+}
