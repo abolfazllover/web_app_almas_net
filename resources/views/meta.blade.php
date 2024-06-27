@@ -17,6 +17,9 @@
 <script src="{{route('home')}}/js/bootstrap.js"></script>
 <meta name="csrf-token" content="{{@csrf_token()}}">
 
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 <style>
 
     @font-face {
@@ -57,6 +60,16 @@
 
     .color_basic{
         color: #3B94DC;
+    }
+
+    .select2-selection{
+        height: 40px!important;
+        padding: 7px!important;
+        border-color: #ccc!important;
+    }
+    .select2-selection__arrow{
+        top: 8px!important;
+        left: 10px!important;
     }
 </style>
 

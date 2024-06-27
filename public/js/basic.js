@@ -44,4 +44,51 @@ function ajax_sender(url,data,method,success_fun){
     })
 }
 
+function draw_rout_to_map(map,data){
+
+    for (let k = 0; k < Object.keys(data.routes).length; k++) {
+
+        for (let j = 0; j < Object.keys(data.routes[k].legs).length; j++) {
+
+            for (let i = 0; i < Object.keys(data.routes[k].legs[j].steps).length; i++) {
+                var step = data.routes[k].legs[j].steps[i];
+
+                // decode Encoded polyline and draw on map
+                L.Polyline.fromEncoded(step.polyline, {
+                    color: "#250ECD",
+                    weight: 12
+                }).addTo(map);
+
+                // add point in start of step
+                L.circleMarker([step.start_location[1], step.start_location[0]], {
+                    weight: 1,
+                    color: "#FFFFFF",
+                    radius: 5,
+                    fill: true,
+                    fillColor: "#9fbef9",
+                    fillOpacity: 1.0
+                }).addTo(map);
+            }
+        }
+    }
+}
+
+async function neshan_api(address,fun){
+    var data;
+    await $.ajax({
+        url : address ,
+        headers: {
+            'Api-Key': 'service.393611b6541247348119027bd24254d3'
+        },
+        dataType: 'json',
+        success : function (e){
+            fun(e)
+        },
+        error : function (e){
+            error_alert('خطا در ارتباط با api نشان');
+        }
+    })
+    return data;
+}
+
 

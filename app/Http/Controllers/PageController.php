@@ -14,11 +14,17 @@ class PageController extends Controller
         }
     }
 
-    function page_panel($page='home'){
+    function log_out(){
+      saveCookie('token','',1);
+      return redirect()->route('login');
+    }
 
+    function page_panel($page='home'){
+        $api=new ApiController();
         return view('panel.index')->with([
-            'user'=>(new ApiController())->user_info(),
-            'page'=>$page
+            'user'=>$api->user_info(),
+            'page'=>$page,
+            'basic_info'=>$api->get_basic_data()['result'],
         ]);
     }
 }

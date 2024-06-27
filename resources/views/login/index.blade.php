@@ -25,6 +25,7 @@
         </div>
         <div>
             <button onclick="login($(this))" class="btn btn-primary w-100 d-block my-2 rounded-2">ورود</button>
+            <button class="btn m-auto btn-success" id="install" hidden>نصب اپلیکیشن</button>
         </div>
     </section>
 </div>
@@ -49,5 +50,9 @@
        }
        d.removeClass('disabled')
    }
+
+
+
+
 </script>
 </html>
