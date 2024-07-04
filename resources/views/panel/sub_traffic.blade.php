@@ -1,7 +1,18 @@
+@if(request()->has('for'))
+    @php $code=base64_decode(request('for')); @endphp
+@endif
 
 @extends('components.map')
 @section('footer_action')
-    <div class="row m-auto">
+    <div class="row m-auto step1" style="min-height: 120px">
+        <div class="col-12 d-flex justify-content-center align-items-center">
+            <div class="btn-group btn-group">
+                <button {{request()->has('type') && request('type')=='magh' ? 'disabled' : ''}} id="btn_mab" onclick="next_step('mab')" class="btn btn-primary">ثبت مبدا</button>
+                <button {{request()->has('type') && request('type')=='mab' ? 'disabled' : ''}} id="btn_magh" onclick="next_step('magh')" class="btn btn-warning">ثبت مقصد</button>
+            </div>
+        </div>
+    </div>
+    <div class="row m-auto step2" style="display: none">
         <div class="col-12">
             <div style="font-size: 1.2rem" class="mb-2 ms-2 form-check form-switch d-flex align-items-center">
                 <input  style="font-size: 1.4rem" class="form-check-input" type="checkbox" role="switch" id="has_car">
@@ -17,34 +28,50 @@
 <script>
 
     active_back_icon();
-    var code;
+    var code="{{$code ?? $basic_info['code_traffic']}}";
+    var type='{{request()->has('type') ? request('type') : 'mab'}}';
+
+    @if(request()->has('type')) next_step("{{request('type')}}") @endif
+
+    function next_step(type_selected){
+        $('.step1').hide();
+        $('.step2').show()
+        type=type_selected;
+    }
+    function prev_step(type){
+
+        if(type=='mab'){
+            $('#btn_mab').prop('disabled',true)
+        }else {
+            $('#btn_magh').prop('disabled',true)
+        }
+        $('.step1').show();
+        $('.step2').hide()
+    }
 
     function get_code_sub_traffic(){
         ajax_sender('{{route('get_code_sub_traffic')}}',{},"post",function (e){
-            code=e.result;
-            console.log(code)
+            console.log(e)
         })
     }
-    get_code_sub_traffic();
 
-    var greenIcon = new L.Icon({
-        iconUrl: 'https://img.icons8.com/color/48/marker--v1.png',
-        iconSize: [30, 30],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
+
+    var icon_mab=new L.Icon({
+        iconUrl: '{{route('home')}}/img/mr_mab.png',
+        iconSize: [40, 40],
     });
 
-    var redIcon = new L.Icon({
-        iconUrl: 'https://img.icons8.com/ios-filled/50/228BE6/marker.png',
-        iconSize: [30, 30],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
+    var icon_magh=new L.Icon({
+        iconUrl: '{{route('home')}}/img/mr_magh.png',
+        iconSize: [40, 40],
     });
 
 
 
-    let mab_marker= L.marker([base_lat,base_lon], { icon: redIcon, title: "مبدا" });
-    let magh_marker= L.marker([base_lat,base_lon], { icon: greenIcon, title: "مقصد" });
+
+
+    let mab_marker= L.marker([base_lat,base_lon], { icon: icon_mab, title: "مبدا" });
+    let magh_marker= L.marker([base_lat,base_lon], { icon: icon_magh, title: "مقصد" });
 
 
     $(window).ready(function () {
@@ -58,12 +85,11 @@
         var latitude = position.coords.latitude;
         var longitude = position.coords.longitude;
 
-        sub_playload(latitude,longitude)
+        // sub_playload(latitude,longitude)
 
         base_lat=latitude;
         base_lon=longitude;
-
-        // نمایش طول و عرض جغرافیایی در کنسول (یا هر عملیات دیگری که می‌خواهید انجام دهید)
+        
        basic_seter_marker(latitude,longitude)
     }
 
@@ -101,23 +127,25 @@
                 'lon' : base_lon,
                 'address' : addres,
                 'code' : code,
+                'type' : type,
             },'post',function (e) {
+                prev_step(type);
+                code=e.result.code;
+                type=e.result.type;
                if(e.result.type=='magh'){
-                  code=random_code();
-                   magh_marker.setLatLng([base_lat,base_lon])
+                  magh_marker.setLatLng([base_lat,base_lon])
                   magh_marker.addTo(map)
                }else {
                    mab_marker.setLatLng([base_lat,base_lon])
                    mab_marker.addTo(map)
                }
+
                success_alert('مشخصات با موفقیت ثبت شد!')
             })
         }
     }
 
-    function random_code(){
-        return "app"+Math.floor(Math.random() * 12);
-    }
+
 
     async function  getAddres(lat,len){
         var ad='';
@@ -150,6 +178,17 @@
         })
     }
 
+
+    @foreach($basic_info['list_traffic_to_day'] as $key=>$item)
+        @foreach($item as $traffic)
+        @php
+        $text=$traffic['type']=='mab' ? 'مبدا' : 'مقصد';
+        $icon="icon_".$traffic['type'];
+        @endphp
+            L.marker([{{$traffic['lat']}},{{$traffic['lon']}}],{icon : {{$icon}}}).bindPopup("{{$text}}").addTo(map)
+        @endforeach
+
+    @endforeach
 
 </script>
  @endsection

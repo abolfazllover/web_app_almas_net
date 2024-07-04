@@ -5,23 +5,66 @@ namespace App\Http\Controllers;
 use App\Models\TrafficModel;
 use Illuminate\Http\Request;
 use GuzzleHttp;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\File;
 use Morilog\Jalali\Jalalian;
 
 class ApiController extends Controller
 {
-    function send_req($method,$data){
-        $ris=new GuzzleHttp\Client();
-        $r=$ris->request('post',api_url()."/?$method",[
-            'form_params' => $data
-        ]);
-        return $r->getBody()->getContents();
+
+    function send_req($method, $data,UploadedFile $file=null) {
+        $client = new GuzzleHttp\Client();
+
+
+        // برای تهیه multipart برای ارسال
+        $multipart = [];
+
+        foreach ($data as $key => $value) {
+            if (is_array($value)) {
+                foreach ($value as $subValue) {
+                    $multipart[] = [
+                        'name' => $key . '[]',
+                        'contents' => $subValue
+                    ];
+                }
+            } else {
+                $multipart[] = [
+                    'name' => $key,
+                    'contents' => $value
+                ];
+            }
+        }
+
+        // اضافه کردن فایل به multipart
+        if ($file!==null){
+            $multipart[] = [
+                'name' => 'file', // نام فیلدی که فایل را با آن ارسال می‌کنید
+                'contents' => $file->getContent(), // باز کردن فایل برای ارسال
+                'filename' => $file->getClientOriginalName() // نام فایل
+            ];
+        }
+
+
+        // ارسال درخواست به سرور
+        try {
+            $response = $client->request('POST', api_url() . "/?$method", [
+                'multipart' => $multipart
+            ]);
+
+            // بازگرداندن محتوای بدنه پاسخ
+            return $response->getBody()->getContents();
+        } catch (\Exception $e) {
+            // مدیریت خطا
+            return 'Error: ' . $e->getMessage();
+        }
     }
+
 
     function login(Request $request){
         $result=$this->send_req('login',$request->all());
         $data=json_decode($result,true);
         if ($data['status']=='success'){
-            saveCookie('token',$data['result']['token'],(12*60));
+            saveCookie('token',$data['result']['token'],30*(24*60));
         }
 
         return $result;
@@ -58,6 +101,15 @@ class ApiController extends Controller
 
         $result=$this->send_req('sub_traffic',$data->all());
         return $result;
+    }
+
+    function get_my_erja_ticket(){
+        $token=getCookie('token');
+        $data=[];
+        $data['token']=$token;
+        $result=$this->send_req('my_erja_ticket',$data);
+
+        return json_decode($result,true);
     }
 
 
@@ -119,6 +171,77 @@ class ApiController extends Controller
         return json_decode($result,true);
     }
 
+    function get_log_ticket($code){
+        $result=$this->send_req('get_log_ticket',['token'=>getCookie('token'),'code'=>$code]);
+        return json_decode($result,true);
+    }
 
+    function sub_answer_ticket(Request $request){
+        $request['token']=getCookie('token');
+        if ($request->hasFile('file')){
+            $file=$request->file('file');
+        }else{
+            $file=null;
+        }
+
+        $result=$this->send_req('addlogrequser',$request->all(),$file);
+        return redirect()->route('page','my_ticket')->with('success','با موفقیت اطلاعات شما ثبت شد');
+    }
+
+    function get_page($page_name,$param=null){
+        $request=[];
+        $request['page_name']=$page_name;
+        $request['token']=getCookie('token');
+
+        $addres='get_page';
+        if ($param!=null){
+            foreach ($param as $item){
+                $addres.="&".$item['key'].'='.$item['val'];
+            }
+        }
+
+        $result=$this->send_req($addres,$request);
+        return json_decode($result,true);
+    }
+
+    function sub_ticket(Request $request){
+        $request['token']=getCookie('token');
+        if ($request->hasFile('file')){
+            $file=$request->file('file');
+        }else{
+            $file=null;
+        }
+        $result=$this->send_req('subticket',$request->all(),$file);
+        return redirect()->route('page','my_ticket')->with('success','با موفقیت تیکت ایجاد شد');
+    }
+
+    function sub_repjop(Request $request){
+        unset( $request['_token']);
+        $request['token']=getCookie('token');
+        $result=$this->send_req('newlistrepjop',$request->all());
+        return redirect()->route('page','list_repjop')->with('success','گزارش کار شما با موفقیت ثبت شد');
+    }
+
+    function get_list_repjop(){
+        $request=[];
+        $request['token']=getCookie('token');
+        $result=$this->send_req('get_list_repjop',$request);
+        return json_decode($result,true);
+    }
+
+    function sub_new_vacation(Request $request){
+        $request['token']=getCookie('token');
+        unset($request['_token']);
+        $result=$this->send_req('newreqvacation',$request->all());
+        return redirect()->route('page','list_reqvations')->with('success','درخواست مرخصی شما با موفقیت ثبت شد');
+    }
+
+    function my_list_req_vacations(){
+        $data=[
+            'token'=>getCookie('token')
+        ];
+        $result=$this->send_req('my_list_req_vacations',$data);
+        return json_decode($result,true);
+    }
 
 }

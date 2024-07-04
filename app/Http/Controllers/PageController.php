@@ -21,6 +21,7 @@ class PageController extends Controller
 
     function page_panel($page='home'){
         $api=new ApiController();
+
         return view('panel.index')->with([
             'user'=>$api->user_info(),
             'page'=>$page,

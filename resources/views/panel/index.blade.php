@@ -40,6 +40,7 @@
         }
 
 
+
     </style>
 
     <script>
@@ -67,32 +68,77 @@
             </div>
             <div class="col-6 d-flex justify-content-end">
                 <a href="{{route('log_out')}}" class="fa fa-power-off p-2 rounded-2 text-dark"></a>
-                <a id="back_icon" style="display: none" href="{{url()->previous()}}" class="fa fa-arrow-left p-2 rounded-2 text-light ms-2"></a>
+                <a id="back_icon" style="display: none" onclick="goBack()" class="fa fa-arrow-left p-2 rounded-2 text-light ms-2"></a>
             </div>
         </div>
     </nav>
 
 
-    <main class="py-1 row" style="height: 92%">
+    <main class="py-1" style="height: 92%">
         @if($page=='home')
-        <div class="col-6 position-relative">
-            <a href="{{route('page','list_sub_traffic')}}" class="shadow-sm p-1 border btn d-flex flex-column justify-content-center align-items-center item_menu">
-                <i style="color: #3B94DC" class="fa fa-car my-2"></i>
-               <h4 class="h6">ثبت تردد</h4>
-            </a>
-        </div>
+        <div class="row">
+            @if($user['traffic']==1)
+            <div class="col-6 position-relative my-1">
+                <a href="{{route('page','list_sub_traffic')}}" class="shadow-sm p-1 border btn d-flex flex-column justify-content-center align-items-center item_menu">
+                    <i style="color: #3B94DC" class="fa fa-car my-2"></i>
+                    <h4 class="h6">ثبت تردد</h4>
+                </a>
+            </div>
+            @endif
 
-        <div class="col-6 position-relative">
+            @if($user['bazdidm']==1)
+            <div class="col-6 position-relative my-1">
                 <a href="{{route('page','see_view_m')}}" class="shadow-sm p-1 border btn d-flex flex-column justify-content-center align-items-center item_menu">
                     <i style="color: #3B94DC" class="fa fa-walking my-2"></i>
                     <h4 class="h6">بازدید میدانی</h4>
                     @if($basic_info['num_view_m']>0)
-                    <span class="counter">{{$basic_info['num_view_m']}}</span>
+                        <span class="counter">{{$basic_info['num_view_m']}}</span>
                     @endif
                 </a>
+            </div>
+            @endif
+
+            @if($user['tickets']==1)
+            <div class="col-6 position-relative my-1">
+                <a href="{{route('page','my_ticket')}}" class="shadow-sm p-1 border btn d-flex flex-column justify-content-center align-items-center item_menu">
+                    <i style="color: #3B94DC" class="fa fa-ticket my-2"></i>
+                    <h4 class="h6">تیکت های من</h4>
+                </a>
+            </div>
+            @endif
+
+
+            <div class="col-6 position-relative my-1">
+                <a href="{{route('page','my_erja_ticket')}}" class="shadow-sm p-1 border btn d-flex flex-column justify-content-center align-items-center item_menu">
+                    <i style="color: #3B94DC" class="fa fa-ticket my-2"></i>
+                    <h4 class="h6">کارتابل وظایف</h4>
+                    @if($basic_info['num_my_erja_ticket']>0)
+                        <span class="counter">{{$basic_info['num_my_erja_ticket']}}</span>
+                    @endif
+                </a>
+            </div>
+
+
+            @if($user['traffic']==1)
+            <div class="col-6 position-relative my-1">
+                <a href="{{route('page','list_repjop')}}" class="shadow-sm p-1 border btn d-flex flex-column justify-content-center align-items-center item_menu">
+                    <i style="color: #3B94DC" class="fa fa-book my-2"></i>
+                    <h4 class="h6">گزارش کار</h4>
+                </a>
+            </div>
+            @endif
+
+                @if($user['reqvacations']==1)
+                    <div class="col-6 position-relative my-1">
+                        <a href="{{route('page','list_reqvations')}}" class="shadow-sm p-1 border btn d-flex flex-column justify-content-center align-items-center item_menu">
+                            <i style="color: #3B94DC" class="fa fa-bed my-2"></i>
+                            <h4 class="h6">درخواست مرخصی</h4>
+                        </a>
+                    </div>
+                @endif
         </div>
         @else
-           <div class="col-12">
+           <div class="col-12 p-2 h-100">
                @if(view()->exists('panel.'.$page)) @include('panel.'.$page) @endif
            </div>
         @endif
@@ -110,6 +156,10 @@
         navigator.serviceWorker.controller.postMessage('Start_counter')
     }else {
         console.log('not active navigator.serviceWorker.controller')
+    }
+
+    function goBack() {
+        window.history.back();
     }
 </script>
 

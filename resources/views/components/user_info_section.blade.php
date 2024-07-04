@@ -1,3 +1,7 @@
+@if($emk_data==null)
+    <p class="alert alert-warning p-2">اطلاعات مشترک یافت نشد!</p>
+@else
+
 <style>
     #l1{
         padding: 0;
@@ -64,3 +68,4 @@
         {{$emk_data['addres']}}
     </li>
 </ul>
+@endif

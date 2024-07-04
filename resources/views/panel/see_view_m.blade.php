@@ -40,7 +40,7 @@
             ابزار امکان سنجی
         </a>
 
-        <a href="{{route('page',['routing_map','lat'=>$emk_data['lat'],'lon'=>$emk_data['lon']])}}" class="d-block my-2 py-2 btn border text-muted">
+        <a href="{{route('page',['routing_map','lat_emk'=>$emk_data['lat'],'lon_emk'=>$emk_data['lon']])}}" class="d-block my-2 py-2 btn border text-muted">
             <i class="fa fa-map"></i>
             مسیریابی
         </a>

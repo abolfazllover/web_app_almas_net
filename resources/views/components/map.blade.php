@@ -1,6 +1,5 @@
 <style>
     #map {
-        height: 100%!important;
         width: 100%;
     }
     #bd_sub_loc{
@@ -27,8 +26,8 @@
     }
 </style>
 
-<div class="h-100 col-12 position-relative">
-    <div  id="map"></div>
+<div class="bg-danger h-100 overflow-hidden position-relative">
+    <div id="map"></div>
 
     <div id="bd_sub_loc" class="w-100">
         <div class="p-2 ps-3 pe-3 bg-light" style="color: #525252;border-radius: 25px 25px 0 0;border: 1px solid #ccc">
@@ -42,9 +41,11 @@
     </span>
 </div>
 
+
+
 <script>
-    var base_lat={{request('lat')}};
-    var base_lon={{request('lon')}};
+    var base_lat={{request('lat') ?? 35.699756}};
+    var base_lon={{request('lon') ?? 51.338076}};
     var user_marker= L.marker([base_lat,base_lon]);
 
 
@@ -67,7 +68,7 @@
                 geo=e;
                 basic_seter_marker(e.coords.latitude,e.coords.longitude)
                 setView(e.coords.latitude,e.coords.longitude);
-
+                @yield('after_geo_accept')
             });
 
 
@@ -75,7 +76,7 @@
 
             basic_seter_marker(geo.coords.latitude,geo.coords.longitude)
             setView(geo.coords.latitude,geo.coords.longitude);
-
+            @yield('after_geo_accept')
         }
 
 

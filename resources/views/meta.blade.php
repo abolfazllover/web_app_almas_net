@@ -12,15 +12,23 @@
 
 <link rel="stylesheet" href="{{route('home')}}/css/bootstrap.css">
 <script src="{{route('home')}}/js/jq.js"></script>
+<script src="{{route('home')}}/js/convertdate.js"></script>
 <script src="{{route('home')}}/js/basic.js"></script>
 <script src="{{route('home')}}/js/bootstrap-notify.min.js"></script>
 <script src="{{route('home')}}/js/bootstrap.js"></script>
+<script src="{{route('home')}}/js/mdtimepicker.js"></script>
+<link href="{{route('home')}}/css/mdtimepicker.css" rel="stylesheet">
+<script src=" https://cdn.jsdelivr.net/npm/kamadatepicker@1.5.3/dist/kamadatepicker.min.js "></script>
+<link href=" https://cdn.jsdelivr.net/npm/kamadatepicker@1.5.3/dist/kamadatepicker.min.css " rel="stylesheet">
 <meta name="csrf-token" content="{{@csrf_token()}}">
 
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <style>
+    .select2{
+        width: 100% !important;
+    }
 
     @font-face {
         font-family: 'yk_bold';

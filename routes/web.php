@@ -29,4 +29,8 @@ Route::get('/sub_playload',[\App\Http\Controllers\ApiController::class,'sub_play
 Route::post('/sub_view_m',[\App\Http\Controllers\ApiController::class,'sub_view_m'])->name('sub_view_m');
 Route::post('/get_active_users_namem',[\App\Http\Controllers\ApiController::class,'get_active_users_namem'])->name('get_active_users_namem_api');
 Route::post('/get_code_sub_traffic',[\App\Http\Controllers\ApiController::class,'get_code_sub_traffic'])->name('get_code_sub_traffic');
+Route::post('/sub_answer_ticket',[\App\Http\Controllers\ApiController::class,'sub_answer_ticket'])->name('sub_answer_ticket');
+Route::post('/sub_ticket',[\App\Http\Controllers\ApiController::class,'sub_ticket'])->name('sub_ticket');
+Route::post('/sub_repjop',[\App\Http\Controllers\ApiController::class,'sub_repjop'])->name('sub_repjop');
+Route::post('/sub_new_vacation',[\App\Http\Controllers\ApiController::class,'sub_new_vacation'])->name('sub_new_vacation');
 

@@ -13,9 +13,13 @@ function getCookie($name) {
 
 function api_url(): string
 {
-//    return "https://almas-net.com/crm/api";
-    return  "http://localhost/almas/crm/api";
+    return "https://almas-net.com/crm/api";
+//    return  "http://localhost/almas/crm/api";
 }
+
+function basic_api_url(){
+    return str_replace('/api','',api_url());
+ }
 
 
 function success_json($data){
@@ -37,5 +41,16 @@ function compile_name_users($emk_data){
         return $emk_data['name']." ".$emk_data['family'];
     }
     return $emk_data['namesh'];
+}
+
+
+function get_address($array,$type){
+
+    foreach ($array as $item){
+        if ($item['type']==$type){
+            return $item['addres'];
+        }
+    }
+    return null;
 }
 
